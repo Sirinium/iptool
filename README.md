@@ -77,14 +77,6 @@ iptool
   ```powershell
   iptool /update
   ```
-
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit a pull request with your changes.
-
-## License
-
-This project is licensed under the MIT License.
----
+  
 *This module is currently in beta. Your feedback and contributions are greatly appreciated!*
 
