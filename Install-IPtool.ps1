@@ -5,7 +5,7 @@ $psm1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psm1"
 $psd1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psd1"
 
 # Fonction pour télécharger un fichier
-function Download-File {
+function Get-File {
     param (
         [string]$url,
         [string]$outputPath
@@ -27,8 +27,8 @@ if (-not (Test-Path -Path $modulePath)) {
 
 # Télécharger les fichiers du module depuis GitHub
 Write-Host "Downloading module files..." -ForegroundColor Cyan
-Download-File -url $psm1Url -outputPath "$modulePath\$moduleName.psm1"
-Download-File -url $psd1Url -outputPath "$modulePath\$moduleName.psd1"
+Get-File -url $psm1Url -outputPath "$modulePath\$moduleName.psm1"
+Get-File -url $psd1Url -outputPath "$modulePath\$moduleName.psd1"
 
 # Importer le module dans la session PowerShell courante
 Write-Host "Importing module..." -ForegroundColor Cyan
