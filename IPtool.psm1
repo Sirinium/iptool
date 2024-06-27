@@ -302,8 +302,8 @@ function CheckSpeed {
 function Update-Module {
     $moduleName = "IPtool"
     $modulePath = "$env:USERPROFILE\Documents\WindowsPowerShell\Modules\$moduleName"
-    $psm1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psm1?token=GHSAT0AAAAAACUE265IUQNL7PP5OFLI7N4MZT5IGIA"
-    $psd1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psd1?token=GHSAT0AAAAAACUE265JN7DDKXLWSOAMNZTMZT5IF7A"
+    $psm1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psm1"
+    $psd1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psd1"
 
     # Fonction pour télécharger un fichier
     function Download-File {
