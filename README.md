@@ -11,12 +11,10 @@ IPtool is a PowerShell module providing various tools for IP and DNS management.
 **Note:** This module is currently in beta. Use with caution and report any issues or feedback.
 
 ## Installation
-
-1. Download the `install-IPtool.ps1` script from this repository.
-2. Run the script in PowerShell:
+1. Run this command in PowerShell:
 
    ```powershell
-   ./install-IPtool.ps1
+    iex (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Sirinium/iptool/main/Install-IPtool.ps1')
  
 
 ## Usage
