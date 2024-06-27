@@ -286,8 +286,8 @@ function CheckSpeed {
 
         $downloadLink = Get-SpeedTestDownloadLink
         if ($downloadLink) {
-            Download-SpeedTestZip -downloadLink $downloadLink -destination $zipFilePath
-            Extract-Zip -zipPath $zipFilePath -destination $extractFolderPath
+            Get-SpeedTestZip -downloadLink $downloadLink -destination $zipFilePath
+            Expand-Zip -zipPath $zipFilePath -destination $extractFolderPath
             $executablePath = Join-Path $extractFolderPath "speedtest.exe"
             Run-SpeedTest -executablePath $executablePath -arguments $ScriptArgs
             Remove-Files -zipPath $zipFilePath -folderPath $extractFolderPath
