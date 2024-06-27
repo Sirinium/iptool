@@ -190,11 +190,121 @@ function CheckSIPALG {
     }
 }
 
+function Run-SpeedTest {
+    param (
+        [string]$executablePath,
+        [array]$arguments
+    )
+    if (-not ($arguments -contains "--accept-license")) {
+        $arguments += "--accept-license"
+    }
+    if (-not ($arguments -contains "--accept-gdpr")) {
+        $arguments += "--accept-gdpr"
+    }
+    try {
+        & $executablePath $arguments
+    } catch {
+        Write-Error "Error running SpeedTest: $_"
+    }
+}
+
+function Get-SpeedTestDownloadLink {
+    try {
+        $url = "https://www.speedtest.net/apps/cli"
+        $webContent = Invoke-WebRequest -Uri $url -UseBasicParsing
+        if ($webContent.Content -match 'href="(https://install\.speedtest\.net/app/cli/ookla-speedtest-[\d\.]+-win64\.zip)"') {
+            return $matches[1]
+        } else {
+            Write-Host "Unable to find the win64 zip download link." -ForegroundColor Red
+            return $null
+        }
+    } catch {
+        Write-Error "Error retrieving download link: $_"
+        return $null
+    }
+}
+
+function Download-SpeedTestZip {
+    param (
+        [string]$downloadLink,
+        [string]$destination
+    )
+    try {
+        Invoke-WebRequest -Uri $downloadLink -OutFile $destination -UseBasicParsing
+    } catch {
+        Write-Error "Error downloading zip file: $_"
+    }
+}
+
+function Extract-Zip {
+    param (
+        [string]$zipPath,
+        [string]$destination
+    )
+    try {
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        [System.IO.Compression.ZipFile]::ExtractToDirectory($zipPath, $destination)
+    } catch {
+        Write-Error "Error extracting zip file: $_"
+    }
+}
+
+function Remove-File {
+    param (
+        [string]$Path
+    )
+    try {
+        if (Test-Path -Path $Path) {
+            Remove-Item -Path $Path -Recurse -ErrorAction Stop
+        }
+    } catch {
+        Write-Error "Unable to remove item: $_"
+    }
+}
+
+function Remove-Files {
+    param(
+        [string]$zipPath,
+        [string]$folderPath
+    )
+    Remove-File -Path $zipPath
+    Remove-File -Path $folderPath
+}
+
+function CheckSpeed {
+    param (
+        [Parameter(Position = 0, ValueFromRemainingArguments = $true)]
+        [string[]]$ScriptArgs
+    )
+
+    try {
+        $tempFolder = $env:TEMP
+        $zipFilePath = Join-Path $tempFolder "speedtest-win64.zip"
+        $extractFolderPath = Join-Path $tempFolder "speedtest-win64"
+
+        Remove-Files -zipPath $zipFilePath -folderPath $extractFolderPath
+
+        $downloadLink = Get-SpeedTestDownloadLink
+        if ($downloadLink) {
+            Download-SpeedTestZip -downloadLink $downloadLink -destination $zipFilePath
+            Extract-Zip -zipPath $zipFilePath -destination $extractFolderPath
+            $executablePath = Join-Path $extractFolderPath "speedtest.exe"
+            Run-SpeedTest -executablePath $executablePath -arguments $ScriptArgs
+            Remove-Files -zipPath $zipFilePath -folderPath $extractFolderPath
+        } else {
+            Write-Host "Failed to retrieve download link. Exiting script." -ForegroundColor Red
+        }
+    } catch {
+        Write-Error "An error occurred: $_"
+    }
+}
+
 function Show-Help {
     Write-Host "iptool <ipOrDomain> /locate  - Retrieve geolocation information for the specified IP or domain." -ForegroundColor Yellow
     Write-Host "iptool <ipOrDomain> /DNS     - Retrieve DNS provider information for the specified domain." -ForegroundColor Yellow
     Write-Host "iptool /me                   - Retrieve your public IP address and geolocation information." -ForegroundColor Yellow
     Write-Host "iptool /alg                  - Check for SIP ALG on your default gateway." -ForegroundColor Yellow
+    Write-Host "iptool /speed                - Run a speed test." -ForegroundColor Yellow
     Write-Host "iptool                       - Show this help message." -ForegroundColor Yellow
 }
 
@@ -210,6 +320,8 @@ function iptool {
         Get-MyIP
     } elseif ($ipOrDomain -eq '/alg') {
         CheckSIPALG
+    } elseif ($ipOrDomain -eq '/speed') {
+        CheckSpeed
     } else {
         switch ($option) {
             '/locate' {
@@ -219,7 +331,7 @@ function iptool {
                 Get-DNSProvider -domain $ipOrDomain
             }
             default {
-                Write-Host "Unknown option: $option. Available options: /locate, /DNS, /me, /alg" -ForegroundColor Red
+                Write-Host "Unknown option: $option. Available options: /locate, /DNS, /me, /alg, /speed" -ForegroundColor Red
             }
         }
     }
