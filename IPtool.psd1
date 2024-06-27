@@ -12,16 +12,16 @@
     GUID = 'd6a86556-12f4-4c5a-94e4-25577a3776ec'
 
     # Author of this module
-    Author = 'Nicolas VIGNON'
+    Author = 'Sirinium'
 
     # Company or vendor of this module
-    CompanyName = 'YourCompany'
+    CompanyName = '401Tech'
 
     # Copyright statement for this module
-    Copyright = '(c) 2023 Nicolas VIGNON. All rights reserved.'
+    Copyright = '(c) 2023 Sirinium. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description = 'Module for IP and DNS tools'
+    Description = 'Module IP and DNS tools'
 
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '5.1'
