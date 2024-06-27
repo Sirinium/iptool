@@ -3,7 +3,7 @@
     RootModule = 'IPtool.psm1'
 
     # Version number of this module.
-    ModuleVersion = '1.2.0'
+    ModuleVersion = '1.2.1'
 
     # Supported PSEditions
     CompatiblePSEditions = @('Desktop', 'Core')
@@ -15,7 +15,7 @@
     Author = 'Sirinium'
 
     # Company or vendor of this module
-    CompanyName = '401Tech'
+    CompanyName = ''
 
     # Copyright statement for this module
     Copyright = '(c) 2023 Sirinium. All rights reserved.'
@@ -45,7 +45,25 @@
     NestedModules = @()
 
     # Functions to export from this module
-    FunctionsToExport = @('Get-GeoLocation', 'Get-DNSProvider', 'Get-MyIP', 'Show-IPInfo', 'Get-DefaultGateway', 'Test-SIPALG', 'CheckSIPALG', 'Show-Help', 'iptool')
+    FunctionsToExport = @(
+        'Get-GeoLocation',
+        'Get-DNSProvider',
+        'Get-MyIP',
+        'Show-IPInfo',
+        'Get-DefaultGateway',
+        'Test-SIPALG',
+        'CheckSIPALG',
+        'Run-SpeedTest',
+        'Get-SpeedTestDownloadLink',
+        'Download-SpeedTestZip',
+        'Extract-Zip',
+        'Remove-File',
+        'Remove-Files',
+        'CheckSpeed',
+        'Update-Module',
+        'Show-Help',
+        'iptool'
+    )
 
     # Cmdlets to export from this module
     CmdletsToExport = @()
