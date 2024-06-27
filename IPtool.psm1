@@ -299,12 +299,60 @@ function CheckSpeed {
     }
 }
 
+function Update-Module {
+    $moduleName = "IPtool"
+    $modulePath = "$env:USERPROFILE\Documents\WindowsPowerShell\Modules\$moduleName"
+    $psm1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psm1?token=GHSAT0AAAAAACUE265IUQNL7PP5OFLI7N4MZT5IGIA"
+    $psd1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psd1?token=GHSAT0AAAAAACUE265JN7DDKXLWSOAMNZTMZT5IF7A"
+
+    # Fonction pour télécharger un fichier
+    function Download-File {
+        param (
+            [string]$url,
+            [string]$outputPath
+        )
+
+        try {
+            Invoke-WebRequest -Uri $url -OutFile $outputPath
+        } catch {
+            Write-Host "Failed to download $url" -ForegroundColor Red
+            throw
+        }
+    }
+
+    # Créer le dossier du module s'il n'existe pas déjà
+    if (-not (Test-Path -Path $modulePath)) {
+        New-Item -Path $modulePath -ItemType Directory
+        Write-Host "Created module directory at $modulePath" -ForegroundColor Green
+    }
+
+    # Télécharger les fichiers du module depuis GitHub
+    Write-Host "=== Downloading module files ===" -ForegroundColor Cyan
+    Download-File -url $psm1Url -outputPath "$modulePath\$moduleName.psm1"
+    Download-File -url $psd1Url -outputPath "$modulePath\$moduleName.psd1"
+
+    # Importer le module dans la session PowerShell courante
+    Write-Host "=== Importing module ===" -ForegroundColor Cyan
+    Import-Module $moduleName -Force
+
+    # Récupérer les informations du module
+    $module = Get-Module -Name $moduleName -ListAvailable | Select-Object -First 1
+
+    Write-Host "=== Module Information ===" -ForegroundColor Cyan
+    Write-Host "Name: $($module.Name)" -ForegroundColor Green
+    Write-Host "Version: $($module.Version)" -ForegroundColor Green
+    Write-Host "Author: $($module.Author)" -ForegroundColor Green
+
+    Write-Host "Module $moduleName has been installed and/or updated successfully." -ForegroundColor Green
+}
+
 function Show-Help {
     Write-Host "iptool <ipOrDomain> /locate  - Retrieve geolocation information for the specified IP or domain." -ForegroundColor Yellow
     Write-Host "iptool <ipOrDomain> /DNS     - Retrieve DNS provider information for the specified domain." -ForegroundColor Yellow
     Write-Host "iptool /me                   - Retrieve your public IP address and geolocation information." -ForegroundColor Yellow
     Write-Host "iptool /alg                  - Check for SIP ALG on your default gateway." -ForegroundColor Yellow
     Write-Host "iptool /speed                - Run a speed test." -ForegroundColor Yellow
+    Write-Host "iptool /update               - Update the IPtool module from GitHub." -ForegroundColor Yellow
     Write-Host "iptool                       - Show this help message." -ForegroundColor Yellow
 }
 
@@ -322,6 +370,8 @@ function iptool {
         CheckSIPALG
     } elseif ($ipOrDomain -eq '/speed') {
         CheckSpeed
+    } elseif ($ipOrDomain -eq '/update') {
+        Update-Module
     } else {
         switch ($option) {
             '/locate' {
@@ -331,7 +381,7 @@ function iptool {
                 Get-DNSProvider -domain $ipOrDomain
             }
             default {
-                Write-Host "Unknown option: $option. Available options: /locate, /DNS, /me, /alg, /speed" -ForegroundColor Red
+                Write-Host "Unknown option: $option. Available options: /locate, /DNS, /me, /alg, /speed, /update" -ForegroundColor Red
             }
         }
     }
