@@ -1,3 +1,4 @@
+
 # IPtool - Module for IP and DNS Tools
 
 ![Version](https://img.shields.io/badge/version-1.2.0-blue)
@@ -16,26 +17,74 @@ IPtool is a PowerShell module providing various tools for IP and DNS management.
 
    ```powershell
    ./install-IPtool.ps1
-#Usage
+ 
 
-### Get-GeoLocation: Retrieve geolocation information for a specified IP or domain.
+## Usage
+
+### Commands
+
+```powershell
+# Get-GeoLocation: Retrieve geolocation information for a specified IP or domain.
 iptool <ipOrDomain> /locate
 
-### Get-DNSProvider: Retrieve DNS provider information for a specified domain.
+# Get-DNSProvider: Retrieve DNS provider information for a specified domain.
 iptool <ipOrDomain> /DNS
 
-### Get-MyIP: Retrieve your public IP address and geolocation information.
+# Get-MyIP: Retrieve your public IP address and geolocation information.
 iptool /me
 
-### CheckSIPALG: Check for SIP ALG on your default gateway.
+# CheckSIPALG: Check for SIP ALG on your default gateway.
 iptool /alg
 
-### CheckSpeed: Run a speed test.
+# CheckSpeed: Run a speed test.
 iptool /speed
 
-### Update-Module: Update the IPtool module from GitHub.
+# Update-Module: Update the IPtool module from GitHub.
 iptool /update
 
-### Show-Help: Show help message.
+# Show-Help: Show help message.
 iptool
+```
+
+### Examples
+
+- To get geolocation information for `example.com`:
+  ```powershell
+  iptool example.com /locate
+  ```
+
+- To get DNS provider information for `example.com`:
+  ```powershell
+  iptool example.com /DNS
+  ```
+
+- To retrieve your public IP address and geolocation information:
+  ```powershell
+  iptool /me
+  ```
+
+- To check for SIP ALG on your default gateway:
+  ```powershell
+  iptool /alg
+  ```
+
+- To run a speed test:
+  ```powershell
+  iptool /speed
+  ```
+
+- To update the IPtool module:
+  ```powershell
+  iptool /update
+  ```
+
+## Contributing
+
+Contributions are welcome! Please fork the repository and submit a pull request with your changes.
+
+## License
+
+This project is licensed under the MIT License.
+---
+*This module is currently in beta. Your feedback and contributions are greatly appreciated!*
 
