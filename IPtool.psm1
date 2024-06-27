@@ -190,7 +190,7 @@ function CheckSIPALG {
     }
 }
 
-function Run-SpeedTest {
+function Get-SpeedTestZip{
     param (
         [string]$executablePath,
         [array]$arguments
@@ -224,7 +224,7 @@ function Get-SpeedTestDownloadLink {
     }
 }
 
-function Download-SpeedTestZip {
+function Get-SpeedTestZip {
     param (
         [string]$downloadLink,
         [string]$destination
@@ -236,7 +236,7 @@ function Download-SpeedTestZip {
     }
 }
 
-function Extract-Zip {
+function Expand-Zip {
     param (
         [string]$zipPath,
         [string]$destination
@@ -306,7 +306,7 @@ function Update-Module {
     $psd1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psd1"
 
     # Fonction pour télécharger un fichier
-    function Download-File {
+    function Get-File {
         param (
             [string]$url,
             [string]$outputPath
