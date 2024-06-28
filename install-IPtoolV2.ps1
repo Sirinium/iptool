@@ -1,6 +1,7 @@
 # Définir les variables
 $moduleName = "IPtool"
 $modulePath = "$env:USERPROFILE\Documents\WindowsPowerShell\Modules\$moduleName"
+$modulesPath = "$modulePath\modules"
 $baseUrl = "https://raw.githubusercontent.com/Sirinium/iptool/main/modules"
 
 # Fonction pour télécharger un fichier
@@ -19,10 +20,15 @@ function Get-File {
     }
 }
 
-# Créer le dossier du module s'il n'existe pas déjà
+# Créer les dossiers du module s'ils n'existent pas déjà
 if (-not (Test-Path -Path $modulePath)) {
     New-Item -Path $modulePath -ItemType Directory
     Write-Host "Created module directory at $modulePath" -ForegroundColor Green
+}
+
+if (-not (Test-Path -Path $modulesPath)) {
+    New-Item -Path $modulesPath -ItemType Directory
+    Write-Host "Created modules directory at $modulesPath" -ForegroundColor Green
 }
 
 # Télécharger le fichier principal du module
@@ -36,13 +42,13 @@ $modules = @(
     'DNSProvider.ps1', 
     'SIPALG.ps1', 
     'SpeedTest.ps1', 
-    'UpdateModule.ps1',  
+    'UpdateModule.ps1',  # Ajout du module UpdateModule.ps1
     'Utility.ps1'
 )
 
 foreach ($module in $modules) {
     $moduleUrl = "$baseUrl/$module"
-    Get-File -url $moduleUrl -outputPath "$modulePath\modules\$module"
+    Get-File -url $moduleUrl -outputPath "$modulesPath\$module"
 }
 
 # Importer le module dans la session PowerShell courante
