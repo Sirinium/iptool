@@ -31,7 +31,14 @@ $psm1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psm1"
 Get-File -url $psm1Url -outputPath "$modulePath\$moduleName.psm1"
 
 # Télécharger tous les modules individuels
-$modules = @('Get-GeoLocation.ps1', 'Get-DNSProvider.ps1', 'Get-MyIP.ps1', 'Show-IPInfo.ps1', 'Get-DefaultGateway.ps1', 'Test-SIPALG.ps1', 'CheckSIPALG.ps1', 'Get-SpeedTestDownloadLink.ps1', 'Get-SpeedTestZip.ps1', 'Expand-Zip.ps1', 'Invoke-SpeedTest.ps1', 'Remove-File.ps1', 'Remove-Files.ps1', 'CheckSpeed.ps1', 'Update-Module.ps1', 'Show-Help.ps1', 'iptool.ps1')
+$modules = @(
+    'GeoLocation.ps1', 
+    'DNSProvider.ps1', 
+    'SIPALG.ps1', 
+    'SpeedTest.ps1', 
+    'UpdateModule.ps1',  
+    'Utility.ps1'
+)
 
 foreach ($module in $modules) {
     $moduleUrl = "$baseUrl/$module"
