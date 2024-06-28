@@ -42,7 +42,7 @@ $modules = @(
     'DNSProvider.ps1', 
     'SIPALG.ps1', 
     'SpeedTest.ps1', 
-    'UpdateModule.ps1', 
+    'UpdateModule.ps1',  # Ajout du module UpdateModule.ps1
     'Utility.ps1'
 )
 
