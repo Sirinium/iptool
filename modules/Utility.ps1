@@ -1,4 +1,4 @@
-# Version: 1.0.4
+# Version: 1.0.5
 function Show-Help {
     Write-Host "iptool <ipOrDomain> /locate  - Retrieve geolocation information for the specified IP or domain." -ForegroundColor Yellow
     Write-Host "iptool <ipOrDomain> /DNS     - Retrieve DNS provider information for the specified domain." -ForegroundColor Yellow
@@ -6,7 +6,7 @@ function Show-Help {
     Write-Host "iptool /alg                  - Check for SIP ALG on your default gateway." -ForegroundColor Yellow
     Write-Host "iptool /speed                - Run a speed test." -ForegroundColor Yellow
     Write-Host "iptool /update               - Update the IPtool module from GitHub." -ForegroundColor Yellow
-    Write-Host "iptool -v                    - Show version information for IPtool and its modules." -ForegroundColor Yellow
+    Write-Host "iptool /v                    - Show version information for IPtool and its modules." -ForegroundColor Yellow
     Write-Host "iptool                       - Show this help message." -ForegroundColor Yellow
 }
 
@@ -45,7 +45,7 @@ function iptool {
         CheckSpeed -ScriptArgs $null
     } elseif ($ipOrDomain -eq '/update') {
         Update-Module
-    } elseif ($ipOrDomain -eq '-v') {
+    } elseif ($ipOrDomain -eq '/v') {
         Show-Version
     } else {
         switch ($option) {
