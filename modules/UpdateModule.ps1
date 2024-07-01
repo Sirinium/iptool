@@ -44,3 +44,4 @@ function Update-Module {
 
     Write-Host "Module $moduleName has been installed and/or updated successfully." -ForegroundColor Green
 }
+Write-Host "Loaded module: Update.ps1" -ForegroundColor Green
