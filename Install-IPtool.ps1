@@ -1,10 +1,10 @@
-# Définir les variables
+# Define variables
 $moduleName = "IPtool"
 $modulePath = "$env:USERPROFILE\Documents\WindowsPowerShell\Modules\$moduleName"
 $modulesPath = "$modulePath\modules"
 $baseUrl = "https://raw.githubusercontent.com/Sirinium/iptool/main/modules"
 
-# Fonction pour télécharger un fichier
+# Function to download a file
 function Receive-File {
     param (
         [string]$url,
@@ -20,7 +20,7 @@ function Receive-File {
     }
 }
 
-# Fonction pour obtenir la version d'un module
+# Function to get module version
 function Get-ModuleVersion {
     param (
         [string]$filePath
@@ -33,7 +33,7 @@ function Get-ModuleVersion {
     }
 }
 
-# Créer les dossiers du module s'ils n'existent pas déjà
+# Create directories if they don't exist
 if (-not (Test-Path -Path $modulePath)) {
     New-Item -Path $modulePath -ItemType Directory
     Write-Host "Created module directory" -ForegroundColor Green
@@ -44,14 +44,14 @@ if (-not (Test-Path -Path $modulesPath)) {
     Write-Host "Created modules directory" -ForegroundColor Green
 }
 
-# Télécharger les fichiers principaux du module
+# Download main module files
 Write-Host "=== Downloading module files ===" -ForegroundColor Cyan
 $psm1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psm1"
 $psd1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psd1"
 Receive-File -url $psm1Url -outputPath "$modulePath\$moduleName.psm1"
 Receive-File -url $psd1Url -outputPath "$modulePath\$moduleName.psd1"
 
-# Télécharger tous les modules individuels
+# Download individual modules
 $modules = @(
     'GeoLocation.ps1', 
     'DNSProvider.ps1', 
@@ -67,32 +67,24 @@ foreach ($module in $modules) {
     $localModulePath = "$modulesPath\$module"
 
     if (Test-Path $localModulePath) {
-        $localVersion = Get-ModuleVersion -filePath $localModulePath
-    } else {
-        $localVersion = "0.0.0"
+        Remove-Item -Path $localModulePath -Force
     }
 
     $tempPath = Join-Path $env:TEMP $module
     Receive-File -url $moduleUrl -outputPath $tempPath
     $remoteVersion = Get-ModuleVersion -filePath $tempPath
 
-    if ([version]$remoteVersion -gt [version]$localVersion) {
-        Copy-Item -Path $tempPath -Destination $localModulePath -Force
-        $updatedModules += "Updated $module ($localVersion => $remoteVersion)"
-    }
+    Copy-Item -Path $tempPath -Destination $localModulePath -Force
+    $updatedModules += "Downloaded $module (version: $remoteVersion)"
 
     Remove-Item -Path $tempPath -Force
 }
 
-# Afficher les informations sur les modules mis à jour
-if ($updatedModules.Count -eq 0) {
-    Write-Host "All modules are up-to-date." -ForegroundColor Yellow
-} else {
-    Write-Host "=== Updated Modules ===" -ForegroundColor Cyan
-    $updatedModules | ForEach-Object { Write-Host $_ -ForegroundColor Green }
-}
+# Display updated modules
+Write-Host "=== Updated Modules ===" -ForegroundColor Cyan
+$updatedModules | ForEach-Object { Write-Host $_ -ForegroundColor Green }
 
-# Vérifier que les fichiers ont bien été téléchargés
+# Verify downloaded files
 Write-Host "=== Verifying downloaded files ===" -ForegroundColor Cyan
 $mainFiles = @(
     "$modulePath\$moduleName.psm1",
@@ -117,7 +109,7 @@ foreach ($module in $modules) {
     }
 }
 
-# Importer le module dans la session PowerShell courante
+# Import the module into the current PowerShell session
 Write-Host "=== Importing module ===" -ForegroundColor Cyan
 try {
     Import-Module $moduleName -Force
@@ -126,7 +118,7 @@ try {
     Write-Host "Error importing module ${moduleName}: $($_.Exception.Message)" -ForegroundColor Red
 }
 
-# Récupérer les informations du module
+# Retrieve module information
 Write-Host "=== Retrieving module information ===" -ForegroundColor Cyan
 try {
     $module = Get-Module -Name $moduleName -ListAvailable | Select-Object -First 1
