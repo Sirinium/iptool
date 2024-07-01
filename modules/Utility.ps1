@@ -21,7 +21,7 @@ function iptool {
     } elseif ($ipOrDomain -eq '/alg') {
         CheckSIPALG
     } elseif ($ipOrDomain -eq '/speed') {
-        CheckSpeed
+        CheckSpeed -ScriptArgs $null
     } elseif ($ipOrDomain -eq '/update') {
         Update-Module
     } else {
@@ -38,3 +38,5 @@ function iptool {
         }
     }
 }
+
+Write-Host "Loaded module: Utility.ps1" -ForegroundColor Green
