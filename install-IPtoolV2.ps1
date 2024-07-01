@@ -1,10 +1,10 @@
-# Définir les variables
+# Define variables
 $moduleName = "IPtool"
 $modulePath = "$env:USERPROFILE\Documents\WindowsPowerShell\Modules\$moduleName"
 $modulesPath = "$modulePath\modules"
 $baseUrl = "https://raw.githubusercontent.com/Sirinium/iptool/main/modules"
 
-# Fonction pour télécharger un fichier
+# Function to download a file
 function Receive-File {
     param (
         [string]$url,
@@ -20,7 +20,7 @@ function Receive-File {
     }
 }
 
-# Fonction pour obtenir la version d'un module
+# Function to get the version of a module
 function Get-ModuleVersion {
     param (
         [string]$filePath
@@ -33,7 +33,7 @@ function Get-ModuleVersion {
     }
 }
 
-# Créer les dossiers du module s'ils n'existent pas déjà
+# Create the module directories if they do not exist
 if (-not (Test-Path -Path $modulePath)) {
     New-Item -Path $modulePath -ItemType Directory
     Write-Host "Created module directory" -ForegroundColor Green
@@ -44,14 +44,14 @@ if (-not (Test-Path -Path $modulesPath)) {
     Write-Host "Created modules directory" -ForegroundColor Green
 }
 
-# Télécharger les fichiers principaux du module
+# Download the main module files
 Write-Host "=== Downloading module files ===" -ForegroundColor Cyan
 $psm1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psm1"
 $psd1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psd1"
 Receive-File -url $psm1Url -outputPath "$modulePath\$moduleName.psm1"
 Receive-File -url $psd1Url -outputPath "$modulePath\$moduleName.psd1"
 
-# Télécharger tous les modules individuels
+# Download all individual modules
 $modules = @(
     'GeoLocation.ps1', 
     'DNSProvider.ps1', 
@@ -61,6 +61,7 @@ $modules = @(
     'Utility.ps1'
 )
 
+$updatedModules = @()
 foreach ($module in $modules) {
     $moduleUrl = "$baseUrl/$module"
     $localModulePath = "$modulesPath\$module"
@@ -75,21 +76,25 @@ foreach ($module in $modules) {
     Receive-File -url $moduleUrl -outputPath $tempPath
     $remoteVersion = Get-ModuleVersion -filePath $tempPath
 
-    Write-Host "Comparing versions for $module" -ForegroundColor Cyan
-    Write-Host "Local version: $localVersion" -ForegroundColor Yellow
-    Write-Host "Remote version: $remoteVersion" -ForegroundColor Yellow
-
     if ([version]$remoteVersion -gt [version]$localVersion) {
         Copy-Item -Path $tempPath -Destination $localModulePath -Force
-        Write-Host "Updated $(Split-Path -Leaf $localModulePath) from version $localVersion to $remoteVersion" -ForegroundColor Green
-    } else {
-        Write-Host "$(Split-Path -Leaf $localModulePath) is up-to-date (version $localVersion)" -ForegroundColor Yellow
+        $updatedModules += "Updated $module from version $localVersion to $remoteVersion"
+    } elseif ([version]$remoteVersion -eq [version]$localVersion) {
+        Write-Host "$module is up-to-date (version $localVersion)" -ForegroundColor Yellow
     }
 
     Remove-Item -Path $tempPath -Force
 }
 
-# Vérifier que les fichiers ont bien été téléchargés
+# Display information about updated modules
+if ($updatedModules.Count -eq 0) {
+    Write-Host "All modules are up-to-date." -ForegroundColor Yellow
+} else {
+    Write-Host "=== Updated Modules ===" -ForegroundColor Cyan
+    $updatedModules | ForEach-Object { Write-Host $_ -ForegroundColor Green }
+}
+
+# Verify that the main files have been downloaded correctly
 Write-Host "=== Verifying downloaded files ===" -ForegroundColor Cyan
 $mainFiles = @(
     "$modulePath\$moduleName.psm1",
@@ -114,7 +119,7 @@ foreach ($module in $modules) {
     }
 }
 
-# Importer le module dans la session PowerShell courante
+# Import the module into the current PowerShell session
 Write-Host "=== Importing module ===" -ForegroundColor Cyan
 try {
     Import-Module $moduleName -Force
@@ -123,7 +128,7 @@ try {
     Write-Host "Error importing module ${moduleName}: $($_.Exception.Message)" -ForegroundColor Red
 }
 
-# Récupérer les informations du module
+# Retrieve the module information
 Write-Host "=== Retrieving module information ===" -ForegroundColor Cyan
 try {
     $module = Get-Module -Name $moduleName -ListAvailable | Select-Object -First 1
@@ -134,3 +139,5 @@ try {
 } catch {
     Write-Host "Error retrieving module information: $($_.Exception.Message)" -ForegroundColor Red
 }
+
+Write-Host "Module $moduleName has been installed and/or updated successfully." -ForegroundColor Green
