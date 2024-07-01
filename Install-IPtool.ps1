@@ -56,9 +56,9 @@ Write-Host "=== Verifying downloaded files ===" -ForegroundColor Cyan
 foreach ($module in $modules) {
     $filePath = "$modulesPath\$module"
     if (Test-Path $filePath) {
-        Write-Host "Verified $module (loaded)" -ForegroundColor Green
+        Write-Host "Verified $(Split-Path -Leaf $filePath) (loaded)" -ForegroundColor Green
     } else {
-        Write-Host "Error: $module not verified correctly!" -ForegroundColor Red
+        Write-Host "Error: $(Split-Path -Leaf $filePath) not verified correctly!" -ForegroundColor Red
     }
 }
 
