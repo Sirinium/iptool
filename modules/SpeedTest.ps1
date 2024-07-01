@@ -1,4 +1,4 @@
-# Version: 1.0.1
+# Version: 1.0.2
 function Get-SpeedTestDownloadLink {
     try {
         $url = "https://www.speedtest.net/apps/cli"
