@@ -107,3 +107,4 @@ try {
 } catch {
     Write-Error "An error occurred: $_"
 }
+Write-Host "Loaded module: SpeedTest.ps1" -ForegroundColor Green
