@@ -13,9 +13,9 @@ function Receive-File {
 
     try {
         Invoke-WebRequest -Uri $url -OutFile $outputPath
-        Write-Host "Downloaded $url" -ForegroundColor Green
+        Write-Host "Downloaded $(Split-Path -Leaf $url)" -ForegroundColor Green
     } catch {
-        Write-Host "Failed to download $url" -ForegroundColor Red
+        Write-Host "Failed to download $(Split-Path -Leaf $url)" -ForegroundColor Red
         throw
     }
 }
