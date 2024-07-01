@@ -73,4 +73,3 @@ function CheckSIPALG {
         Test-SIPALG -ip $defaultGateway -port $port | Out-Null
     }
 }
-Write-Host "Loaded module: SIPALG.ps1" -ForegroundColor Green
