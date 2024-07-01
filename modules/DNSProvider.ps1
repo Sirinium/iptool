@@ -1,3 +1,4 @@
+# Version: 1.0.0
 function Get-DNSProvider {
     param (
         [string]$domain
