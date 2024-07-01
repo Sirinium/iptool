@@ -77,9 +77,7 @@ foreach ($module in $modules) {
 
     if ([version]$remoteVersion -gt [version]$localVersion) {
         Copy-Item -Path $tempPath -Destination $localModulePath -Force
-        Write-Host "Updated $(Split-Path -Leaf $localModulePath) from version $localVersion to $remoteVersion" -ForegroundColor Green
-    } else {
-        Write-Host "$(Split-Path -Leaf $localModulePath) is up-to-date (version $localVersion)" -ForegroundColor Yellow
+        Write-Host "Updated $module ($localVersion => $remoteVersion)" -ForegroundColor Green
     }
 
     Remove-Item -Path $tempPath -Force
