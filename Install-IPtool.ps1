@@ -1,10 +1,10 @@
-# Define the variables
+# Définir les variables
 $moduleName = "IPtool"
 $modulePath = "$env:USERPROFILE\Documents\WindowsPowerShell\Modules\$moduleName"
 $modulesPath = "$modulePath\modules"
 $baseUrl = "https://raw.githubusercontent.com/Sirinium/iptool/main/modules"
 
-# Function to download a file
+# Fonction pour télécharger un fichier
 function Receive-File {
     param (
         [string]$url,
@@ -20,7 +20,7 @@ function Receive-File {
     }
 }
 
-# Create the module directories if they do not exist
+# Créer les dossiers du module s'ils n'existent pas déjà
 if (-not (Test-Path -Path $modulePath)) {
     New-Item -Path $modulePath -ItemType Directory
     Write-Host "Created module directory" -ForegroundColor Green
@@ -31,14 +31,14 @@ if (-not (Test-Path -Path $modulesPath)) {
     Write-Host "Created modules directory" -ForegroundColor Green
 }
 
-# Download the main module file
+# Télécharger les fichiers principaux du module
 Write-Host "=== Downloading module files ===" -ForegroundColor Cyan
 $psm1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psm1"
 $psd1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psd1"
 Receive-File -url $psm1Url -outputPath "$modulePath\$moduleName.psm1"
 Receive-File -url $psd1Url -outputPath "$modulePath\$moduleName.psd1"
 
-# Download all the individual modules
+# Télécharger tous les modules individuels
 $modules = @(
     'GeoLocation.ps1', 
     'DNSProvider.ps1', 
@@ -53,18 +53,32 @@ foreach ($module in $modules) {
     Receive-File -url $moduleUrl -outputPath "$modulesPath\$module"
 }
 
-# Verify that the files were downloaded correctly
+# Vérifier que les fichiers ont bien été téléchargés
 Write-Host "=== Verifying downloaded files ===" -ForegroundColor Cyan
-foreach ($module in $modules) {
-    $filePath = "$modulesPath\$module"
-    if (Test-Path $filePath) {
-        Write-Host "Verified $(Split-Path -Leaf $filePath) (loaded)" -ForegroundColor Green
+$mainFiles = @(
+    "$modulePath\$moduleName.psm1",
+    "$modulePath\$moduleName.psd1"
+)
+foreach ($file in $mainFiles) {
+    if (Test-Path $file) {
+        Write-Host "Verified $(Split-Path -Leaf $file) exists." -ForegroundColor Green
     } else {
-        Write-Host "Error: $(Split-Path -Leaf $filePath) not verified correctly!" -ForegroundColor Red
+        Write-Host "Error: $(Split-Path -Leaf $file) not found!" -ForegroundColor Red
+        exit 1
     }
 }
 
-# Import the module into the current PowerShell session
+foreach ($module in $modules) {
+    $filePath = "$modulesPath\$module"
+    if (Test-Path $filePath) {
+        Write-Host "Verified $(Split-Path -Leaf $filePath) exists." -ForegroundColor Green
+    } else {
+        Write-Host "Error: $(Split-Path -Leaf $filePath) not verified correctly!" -ForegroundColor Red
+        exit 1
+    }
+}
+
+# Importer le module dans la session PowerShell courante
 Write-Host "=== Importing module ===" -ForegroundColor Cyan
 try {
     Import-Module $moduleName -Force
@@ -73,7 +87,7 @@ try {
     Write-Host "Error importing module ${moduleName}: $($_.Exception.Message)" -ForegroundColor Red
 }
 
-# Retrieve the module information
+# Récupérer les informations du module
 Write-Host "=== Retrieving module information ===" -ForegroundColor Cyan
 try {
     $module = Get-Module -Name $moduleName -ListAvailable | Select-Object -First 1
