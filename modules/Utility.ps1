@@ -38,3 +38,5 @@ function iptool {
         }
     }
 }
+
+Write-Host "Loaded module: Utility.ps1" -ForegroundColor Green
