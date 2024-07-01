@@ -1,11 +1,3 @@
-param (
-    [Parameter(Position = 0, ValueFromRemainingArguments = $true)]
-    [string[]]$ScriptArgs
-)
-
-$ProgressPreference = 'SilentlyContinue'
-$ConfirmPreference = 'None'
-
 function Get-SpeedTestDownloadLink {
     try {
         $url = "https://www.speedtest.net/apps/cli"
@@ -87,23 +79,32 @@ function Remove-Files {
     Remove-File -Path $folderPath
 }
 
-try {
-    $tempFolder = $env:TEMP
-    $zipFilePath = Join-Path $tempFolder "speedtest-win64.zip"
-    $extractFolderPath = Join-Path $tempFolder "speedtest-win64"
+function CheckSpeed {
+    param (
+        [Parameter(Position = 0, ValueFromRemainingArguments = $true)]
+        [string[]]$ScriptArgs
+    )
 
-    Remove-Files -zipPath $zipFilePath -folderPath $extractFolderPath
+    try {
+        $tempFolder = $env:TEMP
+        $zipFilePath = Join-Path $tempFolder "speedtest-win64.zip"
+        $extractFolderPath = Join-Path $tempFolder "speedtest-win64"
 
-    $downloadLink = Get-SpeedTestDownloadLink
-    if ($downloadLink) {
-        Download-SpeedTestZip -downloadLink $downloadLink -destination $zipFilePath
-        Extract-Zip -zipPath $zipFilePath -destination $extractFolderPath
-        $executablePath = Join-Path $extractFolderPath "speedtest.exe"
-        Run-SpeedTest -executablePath $executablePath -arguments $ScriptArgs
         Remove-Files -zipPath $zipFilePath -folderPath $extractFolderPath
-    } else {
-        Write-Host "Failed to retrieve download link. Exiting script." -ForegroundColor Red
+
+        $downloadLink = Get-SpeedTestDownloadLink
+        if ($downloadLink) {
+            Download-SpeedTestZip -downloadLink $downloadLink -destination $zipFilePath
+            Extract-Zip -zipPath $zipFilePath -destination $extractFolderPath
+            $executablePath = Join-Path $extractFolderPath "speedtest.exe"
+            Run-SpeedTest -executablePath $executablePath -arguments $ScriptArgs
+            Remove-Files -zipPath $zipFilePath -folderPath $extractFolderPath
+        } else {
+            Write-Host "Failed to retrieve download link. Exiting script." -ForegroundColor Red
+        }
+    } catch {
+        Write-Error "An error occurred: $_"
     }
-} catch {
-    Write-Error "An error occurred: $_"
 }
+
+Write-Host "Loaded module: SpeedTest.ps1" -ForegroundColor Green
