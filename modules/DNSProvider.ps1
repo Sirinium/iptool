@@ -21,3 +21,4 @@ function Get-DNSProvider {
         Write-Host "DNS Query Error: $($_.Exception.Message)" -ForegroundColor Red
     }
 }
+Write-Host "Loaded module: DNSProvider.ps1" -ForegroundColor Green
