@@ -51,13 +51,24 @@ foreach ($module in $modules) {
     Receive-File -url $moduleUrl -outputPath "$modulesPath\$module"
 }
 
+# Verify that the files were downloaded
+Write-Host "=== Verifying downloaded files ===" -ForegroundColor Cyan
+foreach ($module in $modules) {
+    $filePath = "$modulesPath\$module"
+    if (Test-Path $filePath) {
+        Write-Host "Verified $filePath exists." -ForegroundColor Green
+    } else {
+        Write-Host "Error: $filePath does not exist!" -ForegroundColor Red
+    }
+}
+
 # Import the module into the current PowerShell session
 Write-Host "=== Importing module ===" -ForegroundColor Cyan
 try {
     Import-Module $moduleName -Force
     Write-Host "Module $moduleName imported successfully." -ForegroundColor Green
 } catch {
-    Write-Host "Error importing module $moduleName: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Error importing module ${moduleName}: $($_.Exception.Message)" -ForegroundColor Red
 }
 
 # Retrieve module information
