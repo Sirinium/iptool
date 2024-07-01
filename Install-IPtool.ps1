@@ -61,6 +61,7 @@ $modules = @(
     'Utility.ps1'
 )
 
+$updatedModules = @()
 foreach ($module in $modules) {
     $moduleUrl = "$baseUrl/$module"
     $localModulePath = "$modulesPath\$module"
@@ -77,10 +78,18 @@ foreach ($module in $modules) {
 
     if ([version]$remoteVersion -gt [version]$localVersion) {
         Copy-Item -Path $tempPath -Destination $localModulePath -Force
-        Write-Host "Updated $module ($localVersion => $remoteVersion)" -ForegroundColor Green
+        $updatedModules += "Updated $module ($localVersion => $remoteVersion)"
     }
 
     Remove-Item -Path $tempPath -Force
+}
+
+# Afficher les informations sur les modules mis à jour
+if ($updatedModules.Count -eq 0) {
+    Write-Host "All modules are up-to-date." -ForegroundColor Yellow
+} else {
+    Write-Host "=== Updated Modules ===" -ForegroundColor Cyan
+    $updatedModules | ForEach-Object { Write-Host $_ -ForegroundColor Green }
 }
 
 # Vérifier que les fichiers ont bien été téléchargés
