@@ -91,4 +91,3 @@ function Get-MyIP {
         Write-Host "HTTP Request Error: $($_.Exception.Message)" -ForegroundColor Red
     }
 }
-Write-Host "Loaded module: GeoLocation.ps1" -ForegroundColor Green
