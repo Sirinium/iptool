@@ -4,7 +4,6 @@ function Update-Module {
     $baseGitHubUrl = "https://raw.githubusercontent.com/Sirinium/iptool/main/modules"
     $modules = @("GeoLocation.ps1", "DNSProvider.ps1", "SIPALG.ps1", "SpeedTest.ps1", "UpdateModule.ps1", "Utility.ps1")
 
-    # Fonction pour télécharger un fichier
     function Get-File {
         param (
             [string]$url,
@@ -40,13 +39,13 @@ function Update-Module {
         }
     }
 
-    # Créer le dossier du module s'il n'existe pas déjà
+
     if (-not (Test-Path -Path $modulePath)) {
         New-Item -Path $modulePath -ItemType Directory
         Write-Host "Created module directory at $modulePath" -ForegroundColor Green
     }
 
-    # Télécharger les fichiers du module depuis GitHub si la version est différente
+
     Write-Host "=== Downloading module files ===" -ForegroundColor Cyan
     foreach ($module in $modules) {
         $localFilePath = "$modulePath\$module"
@@ -61,11 +60,9 @@ function Update-Module {
         }
     }
 
-    # Importer le module dans la session PowerShell courante
     Write-Host "=== Importing module ===" -ForegroundColor Cyan
     Import-Module $moduleName -Force
 
-    # Récupérer les informations du module
     $module = Get-Module -Name $moduleName -ListAvailable | Select-Object -First 1
 
     Write-Host "=== Module Information ===" -ForegroundColor Cyan
