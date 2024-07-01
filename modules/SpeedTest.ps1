@@ -1,3 +1,11 @@
+param (
+    [Parameter(Position = 0, ValueFromRemainingArguments = $true)]
+    [string[]]$ScriptArgs
+)
+
+$ProgressPreference = 'SilentlyContinue'
+$ConfirmPreference = 'None'
+
 function Get-SpeedTestDownloadLink {
     try {
         $url = "https://www.speedtest.net/apps/cli"
@@ -14,7 +22,7 @@ function Get-SpeedTestDownloadLink {
     }
 }
 
-function Download-SpeedTestZip {
+function Invoke-SpeedTestDownload {
     param (
         [string]$downloadLink,
         [string]$destination
@@ -26,7 +34,7 @@ function Download-SpeedTestZip {
     }
 }
 
-function Extract-Zip {
+function Expand-Archive {
     param (
         [string]$zipPath,
         [string]$destination
@@ -39,7 +47,7 @@ function Extract-Zip {
     }
 }
 
-function Run-SpeedTest {
+function Start-SpeedTest {
     param (
         [string]$executablePath,
         [array]$arguments
@@ -57,7 +65,7 @@ function Run-SpeedTest {
     }
 }
 
-function Remove-File {
+function Remove-ItemSafely {
     param (
         [string]$Path
     )
@@ -70,39 +78,32 @@ function Remove-File {
     }
 }
 
-function Remove-Files {
+function Clear-SpeedTestFiles {
     param(
         [string]$zipPath,
         [string]$folderPath
     )
-    Remove-File -Path $zipPath
-    Remove-File -Path $folderPath
+    Remove-ItemSafely -Path $zipPath
+    Remove-ItemSafely -Path $folderPath
 }
 
-function CheckSpeed {
-    param (
-        [Parameter(Position = 0, ValueFromRemainingArguments = $true)]
-        [string[]]$ScriptArgs
-    )
+try {
+    $tempFolder = $env:TEMP
+    $zipFilePath = Join-Path $tempFolder "speedtest-win64.zip"
+    $extractFolderPath = Join-Path $tempFolder "speedtest-win64"
 
-    try {
-        $tempFolder = $env:TEMP
-        $zipFilePath = Join-Path $tempFolder "speedtest-win64.zip"
-        $extractFolderPath = Join-Path $tempFolder "speedtest-win64"
+    Clear-SpeedTestFiles -zipPath $zipFilePath -folderPath $extractFolderPath
 
-        Remove-Files -zipPath $zipFilePath -folderPath $extractFolderPath
-
-        $downloadLink = Get-SpeedTestDownloadLink
-        if ($downloadLink) {
-            Download-SpeedTestZip -downloadLink $downloadLink -destination $zipFilePath
-            Extract-Zip -zipPath $zipFilePath -destination $extractFolderPath
-            $executablePath = Join-Path $extractFolderPath "speedtest.exe"
-            Run-SpeedTest -executablePath $executablePath -arguments $ScriptArgs
-            Remove-Files -zipPath $zipFilePath -folderPath $extractFolderPath
-        } else {
-            Write-Host "Failed to retrieve download link. Exiting script." -ForegroundColor Red
-        }
-    } catch {
-        Write-Error "An error occurred: $_"
+    $downloadLink = Get-SpeedTestDownloadLink
+    if ($downloadLink) {
+        Invoke-SpeedTestDownload -downloadLink $downloadLink -destination $zipFilePath
+        Expand-Archive -zipPath $zipFilePath -destination $extractFolderPath
+        $executablePath = Join-Path $extractFolderPath "speedtest.exe"
+        Start-SpeedTest -executablePath $executablePath -arguments $ScriptArgs
+        Clear-SpeedTestFiles -zipPath $zipFilePath -folderPath $extractFolderPath
+    } else {
+        Write-Host "Failed to retrieve download link. Exiting script." -ForegroundColor Red
     }
+} catch {
+    Write-Error "An error occurred: $_"
 }
