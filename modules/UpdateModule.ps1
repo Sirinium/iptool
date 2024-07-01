@@ -1,3 +1,4 @@
+# Version: 1.0.0
 function Update-Module {
     $moduleName = "IPtool"
     $modulePath = "$env:USERPROFILE\Documents\WindowsPowerShell\Modules\$moduleName"
