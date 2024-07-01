@@ -15,7 +15,7 @@ function Get-DNSProvider {
                 }
             }
         } else {
-            Write-Host "No DNS records found for the domain ." -ForegroundColor Red
+            Write-Host "No DNS records found for the domain." -ForegroundColor Red
         }
     } catch {
         Write-Host "DNS Query Error: $($_.Exception.Message)" -ForegroundColor Red
