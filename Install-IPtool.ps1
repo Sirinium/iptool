@@ -33,7 +33,7 @@ $psm1Url = "https://raw.githubusercontent.com/Sirinium/iptool/main/IPtool.psm1"
 Receive-File -url $psm1Url -outputPath "$modulePath\$moduleName.psm1"
 
 $moduleListUrl = "https://api.github.com/repos/Sirinium/iptool/contents/modules"
-$moduleList = Invoke-RestMethod -Uri $moduleListUrl | Where-Object { $_.name -like '*.ps1' }
+$moduleList = Invoke-RestMethod -Uri $moduleListUrl -Headers @{ "User-Agent" = "PowerShell" } | Where-Object { $_.name -like '*.ps1' }
 
 foreach ($module in $moduleList) {
     $moduleUrl = $module.download_url
