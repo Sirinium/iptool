@@ -45,7 +45,7 @@ try {
     Import-Module $moduleName -Force
     Write-Host "Module $moduleName imported successfully." -ForegroundColor Green
 } catch {
-    Write-Host "Error importing module ${moduleName}: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Error importing module $moduleName: $($_.Exception.Message)" -ForegroundColor Red
 }
 
 Write-Host "=== Retrieving module information ===" -ForegroundColor Cyan
