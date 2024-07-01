@@ -23,12 +23,12 @@ function Receive-File {
 # Créer les dossiers du module s'ils n'existent pas déjà
 if (-not (Test-Path -Path $modulePath)) {
     New-Item -Path $modulePath -ItemType Directory
-    Write-Host "Created module directory at $modulePath" -ForegroundColor Green
+    Write-Host "Created module directory" -ForegroundColor Green
 }
 
 if (-not (Test-Path -Path $modulesPath)) {
     New-Item -Path $modulesPath -ItemType Directory
-    Write-Host "Created modules directory at $modulesPath" -ForegroundColor Green
+    Write-Host "Created modules directory" -ForegroundColor Green
 }
 
 # Télécharger le fichier principal du module
@@ -56,9 +56,9 @@ Write-Host "=== Verifying downloaded files ===" -ForegroundColor Cyan
 foreach ($module in $modules) {
     $filePath = "$modulesPath\$module"
     if (Test-Path $filePath) {
-        Write-Host "Verified $filePath exists." -ForegroundColor Green
+        Write-Host "Verified $module (loaded)" -ForegroundColor Green
     } else {
-        Write-Host "Error: $filePath does not exist!" -ForegroundColor Red
+        Write-Host "Error: $module not verified correctly!" -ForegroundColor Red
     }
 }
 
@@ -68,7 +68,7 @@ try {
     Import-Module $moduleName -Force
     Write-Host "Module $moduleName imported successfully." -ForegroundColor Green
 } catch {
-    Write-Host "Error importing module $moduleName: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Error importing module ${moduleName}: $($_.Exception.Message)" -ForegroundColor Red
 }
 
 # Récupérer les informations du module
