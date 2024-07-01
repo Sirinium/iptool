@@ -22,7 +22,7 @@ function Get-SpeedTestDownloadLink {
     }
 }
 
-function Invoke-SpeedTestDownload {
+function Download-SpeedTestZip {
     param (
         [string]$downloadLink,
         [string]$destination
@@ -34,7 +34,7 @@ function Invoke-SpeedTestDownload {
     }
 }
 
-function Expand-Archive {
+function Extract-Zip {
     param (
         [string]$zipPath,
         [string]$destination
@@ -47,7 +47,7 @@ function Expand-Archive {
     }
 }
 
-function Start-SpeedTest {
+function Run-SpeedTest {
     param (
         [string]$executablePath,
         [array]$arguments
@@ -65,7 +65,7 @@ function Start-SpeedTest {
     }
 }
 
-function Remove-ItemSafely {
+function Remove-File {
     param (
         [string]$Path
     )
@@ -78,13 +78,13 @@ function Remove-ItemSafely {
     }
 }
 
-function Clear-SpeedTestFiles {
+function Remove-Files {
     param(
         [string]$zipPath,
         [string]$folderPath
     )
-    Remove-ItemSafely -Path $zipPath
-    Remove-ItemSafely -Path $folderPath
+    Remove-File -Path $zipPath
+    Remove-File -Path $folderPath
 }
 
 try {
@@ -92,15 +92,15 @@ try {
     $zipFilePath = Join-Path $tempFolder "speedtest-win64.zip"
     $extractFolderPath = Join-Path $tempFolder "speedtest-win64"
 
-    Clear-SpeedTestFiles -zipPath $zipFilePath -folderPath $extractFolderPath
+    Remove-Files -zipPath $zipFilePath -folderPath $extractFolderPath
 
     $downloadLink = Get-SpeedTestDownloadLink
     if ($downloadLink) {
-        Invoke-SpeedTestDownload -downloadLink $downloadLink -destination $zipFilePath
-        Expand-Archive -zipPath $zipFilePath -destination $extractFolderPath
+        Download-SpeedTestZip -downloadLink $downloadLink -destination $zipFilePath
+        Extract-Zip -zipPath $zipFilePath -destination $extractFolderPath
         $executablePath = Join-Path $extractFolderPath "speedtest.exe"
-        Start-SpeedTest -executablePath $executablePath -arguments $ScriptArgs
-        Clear-SpeedTestFiles -zipPath $zipFilePath -folderPath $extractFolderPath
+        Run-SpeedTest -executablePath $executablePath -arguments $ScriptArgs
+        Remove-Files -zipPath $zipFilePath -folderPath $extractFolderPath
     } else {
         Write-Host "Failed to retrieve download link. Exiting script." -ForegroundColor Red
     }
