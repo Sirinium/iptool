@@ -22,7 +22,7 @@ function Get-SpeedTestDownloadLink {
     }
 }
 
-function Download-SpeedTestZip {
+function Get-SpeedTestZip {
     param (
         [string]$downloadLink,
         [string]$destination
@@ -34,7 +34,7 @@ function Download-SpeedTestZip {
     }
 }
 
-function Extract-Zip {
+function Expand-Zip {
     param (
         [string]$zipPath,
         [string]$destination
@@ -47,7 +47,7 @@ function Extract-Zip {
     }
 }
 
-function Run-SpeedTest {
+function invoke-SpeedTest {
     param (
         [string]$executablePath,
         [array]$arguments
@@ -96,10 +96,10 @@ try {
 
     $downloadLink = Get-SpeedTestDownloadLink
     if ($downloadLink) {
-        Download-SpeedTestZip -downloadLink $downloadLink -destination $zipFilePath
-        Extract-Zip -zipPath $zipFilePath -destination $extractFolderPath
+        Get-SpeedTestZip -downloadLink $downloadLink -destination $zipFilePath
+        Expand-Zip -zipPath $zipFilePath -destination $extractFolderPath
         $executablePath = Join-Path $extractFolderPath "speedtest.exe"
-        Run-SpeedTest -executablePath $executablePath -arguments $ScriptArgs
+        invoke-SpeedTest -executablePath $executablePath -arguments $ScriptArgs
         Remove-Files -zipPath $zipFilePath -folderPath $extractFolderPath
     } else {
         Write-Host "Failed to retrieve download link. Exiting script." -ForegroundColor Red
