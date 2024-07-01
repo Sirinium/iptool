@@ -1,4 +1,4 @@
-# Version: 1.0.5
+# Version: 1.0.6
 function Show-Help {
     Write-Host "iptool <ipOrDomain> /locate  - Retrieve geolocation information for the specified IP or domain." -ForegroundColor Yellow
     Write-Host "iptool <ipOrDomain> /DNS     - Retrieve DNS provider information for the specified domain." -ForegroundColor Yellow
@@ -13,7 +13,7 @@ function Show-Help {
 function Show-Version {
     Write-Host "=== IPtool Version Information ===" -ForegroundColor Cyan
     $modulesPath = "$env:USERPROFILE\Documents\WindowsPowerShell\Modules\IPtool\modules"
-    $mainModule = "$env:USERPROFILE\Documents\WindowsPowerShell\Modules\IPtool\IPtool.psd1"
+    $mainModule = "$env:USERPROFILE\Documents\WindowsPowerShell\Modules\IPtool\IPtool.psm1"
     
     if (Test-Path $mainModule) {
         $mainVersion = (Select-String -Path $mainModule -Pattern '# Version:' | Select-Object -First 1).Line.Split(':')[1].Trim()
