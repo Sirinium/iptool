@@ -20,6 +20,19 @@ function Receive-File {
     }
 }
 
+# Fonction pour obtenir la version d'un module
+function Get-ModuleVersion {
+    param (
+        [string]$filePath
+    )
+    $versionLine = Select-String -Path $filePath -Pattern '# Version:' | Select-Object -First 1
+    if ($versionLine) {
+        return $versionLine.Line.Split(':')[1].Trim()
+    } else {
+        return "0.0.0"
+    }
+}
+
 # Créer les dossiers du module s'ils n'existent pas déjà
 if (-not (Test-Path -Path $modulePath)) {
     New-Item -Path $modulePath -ItemType Directory
@@ -50,7 +63,26 @@ $modules = @(
 
 foreach ($module in $modules) {
     $moduleUrl = "$baseUrl/$module"
-    Receive-File -url $moduleUrl -outputPath "$modulesPath\$module"
+    $localModulePath = "$modulesPath\$module"
+
+    if (Test-Path $localModulePath) {
+        $localVersion = Get-ModuleVersion -filePath $localModulePath
+    } else {
+        $localVersion = "0.0.0"
+    }
+
+    $tempPath = Join-Path $env:TEMP $module
+    Receive-File -url $moduleUrl -outputPath $tempPath
+    $remoteVersion = Get-ModuleVersion -filePath $tempPath
+
+    if ([version]$remoteVersion -gt [version]$localVersion) {
+        Copy-Item -Path $tempPath -Destination $localModulePath -Force
+        Write-Host "Updated $(Split-Path -Leaf $localModulePath) from version $localVersion to $remoteVersion" -ForegroundColor Green
+    } else {
+        Write-Host "$(Split-Path -Leaf $localModulePath) is up-to-date (version $localVersion)" -ForegroundColor Yellow
+    }
+
+    Remove-Item -Path $tempPath -Force
 }
 
 # Vérifier que les fichiers ont bien été téléchargés
