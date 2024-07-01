@@ -1,4 +1,4 @@
-# Version: 1.0.0
+# Version: 1.0.1
 function Get-DefaultGateway {
     $gateway = Get-NetRoute -DestinationPrefix "0.0.0.0/0" | Select-Object -First 1 -ExpandProperty NextHop
     return $gateway
